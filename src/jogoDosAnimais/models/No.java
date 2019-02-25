@@ -1,17 +1,19 @@
 package jogoDosAnimais.models;
 
+import jogoDosAnimais.strategys.PerguntaStrategy;
+
 public class No <T>{
 	
 	private T sim;
 	private T nao;
-	private final String pergunta;
+	private final PerguntaStrategy perguntaStrategy;
 	
-	public No(String pergunta) {
-		this.pergunta = pergunta;
+	public No(PerguntaStrategy perguntaStrategy) {
+		this.perguntaStrategy = perguntaStrategy;
 	}
 	
 	public String getPergunta() {
-		return pergunta;
+		return perguntaStrategy.getPergunta();
 	}
 	
 	public void setSim(T sim) {

@@ -5,6 +5,9 @@ import static javax.swing.JOptionPane.CLOSED_OPTION;
 import static javax.swing.JOptionPane.NO_OPTION;
 import static javax.swing.JOptionPane.YES_NO_OPTION;
 import static javax.swing.JOptionPane.YES_OPTION;
+import static javax.swing.JOptionPane.showConfirmDialog;
+import static javax.swing.JOptionPane.showInputDialog;
+import static javax.swing.JOptionPane.showMessageDialog;
 
 import javax.swing.JOptionPane;
 
@@ -23,10 +26,12 @@ public class App {
 		JOptionPane.showMessageDialog(null, "Pense em um Animal!");
 		while (true) {
 
-			NoAnimal item = arvoreDeDecisao.getAtual();
-
-			Integer result = JOptionPane.showConfirmDialog(null, item.getPergunta(), "Jogo dos Animais", YES_NO_OPTION);
-
+			Integer result = confirmaAnimal();
+			
+			if (CLOSED_OPTION == result || CANCEL_OPTION == result) {
+				break;
+			}
+			
 			if (YES_OPTION == result) {
 
 				try {
@@ -35,7 +40,7 @@ public class App {
 				} catch (Exception e) {
 					JOptionPane.showMessageDialog(null, "Acertei!");
 
-					if (!continuarJogando())
+					if (!reiniciarJogo())
 						break;
 
 					continue;
@@ -49,47 +54,68 @@ public class App {
 					arvoreDeDecisao.nao();
 					continue;
 				} catch (Exception e) {
+					
+					String animal = qualAnimalVocePensou();
 
-					String animal = JOptionPane.showInputDialog("Qual Animal você pensou?");
-
-					if (animal == null && !continuarJogando())
+					if (animal == null)
 						break;
 
-					String pergunta = JOptionPane.showInputDialog("Um(a) " + animal + "____" + "mas um(a) "
-							+ arvoreDeDecisao.getAtual().getAnimal() + " não?");
+					String pergunta = oqueFazAnimal(animal);
 
-					if (pergunta == null && !continuarJogando())
+					if (pergunta == null)
 						break;
 
 					NoAnimal novoAnimal = animalNoFactory.create(pergunta, animal);
 					arvoreDeDecisao.add(novoAnimal);
 
-					if (!continuarJogando())
+					if (!reiniciarJogo())
 						break;
 
 					continue;
 				}
 			}
 
-			if (CLOSED_OPTION == result || CANCEL_OPTION == result) {
-
-				if (!continuarJogando())
-					break;
-			}
-
 		}
 	}
 
-	private static boolean continuarJogando() {
-		Integer result = JOptionPane.showConfirmDialog(null, "Quer continuar Jogando?", "Jogo dos Animais",
-				JOptionPane.YES_NO_OPTION);
-
-		if (YES_OPTION != result)
+	private static boolean reiniciarJogo() {
+		if (!continuarJogando())
 			return false;
 
 		arvoreDeDecisao.inicio();
-		JOptionPane.showMessageDialog(null, "Pense em um Animal!");
+		showMessageDialog(null, "Pense em um Animal!");
 
 		return true;
+	}
+	
+	private static boolean continuarJogando() {
+		return YES_OPTION == showConfirmDialog(null, "Quer continuar Jogando?", "Jogo dos Animais", YES_NO_OPTION);
+	}
+	
+	private static Integer confirmaAnimal() {
+		Integer result = showConfirmDialog(null, arvoreDeDecisao.getAtual().getPergunta(), "Jogo dos Animais", YES_NO_OPTION);
+		
+		if ((CLOSED_OPTION == result || CANCEL_OPTION == result) && continuarJogando())
+			result = confirmaAnimal();
+		
+		return result;
+	}
+	
+	private static String qualAnimalVocePensou() {
+		String animal = showInputDialog("Qual Animal você pensou?");
+
+		if (animal == null && continuarJogando())
+			animal = qualAnimalVocePensou();
+		
+		return animal;
+	}
+	
+	private static String oqueFazAnimal(String animal) {
+		String oqueFaz = showInputDialog("Um(a) " + animal + "____" + "mas um(a) " + arvoreDeDecisao.getAtual().getAnimal() + " não?");
+
+		if (oqueFaz == null && continuarJogando())
+			oqueFaz = oqueFazAnimal(animal);
+		
+		return oqueFaz;
 	}
 }

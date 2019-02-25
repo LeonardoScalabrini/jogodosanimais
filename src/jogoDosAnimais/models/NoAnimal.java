@@ -1,11 +1,13 @@
 package jogoDosAnimais.models;
 
+import jogoDosAnimais.strategys.PerguntaStrategy;
+
 public class NoAnimal extends No<NoAnimal>{
 	
 	private final String animal;
 	
-	public NoAnimal(String pergunta, String animal) {
-		super(pergunta);
+	public NoAnimal(PerguntaStrategy perguntaStrategy, String animal) {
+		super(perguntaStrategy);
 		this.animal = animal;
 	}
 	

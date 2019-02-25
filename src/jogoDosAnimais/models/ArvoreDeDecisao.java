@@ -4,6 +4,7 @@ public class ArvoreDeDecisao <T extends No<T>>{
 
 	private T primeiro;
 	private T atual;
+	private T anterior;
 	
 	public ArvoreDeDecisao(T no) {
 		this.primeiro = no;
@@ -12,6 +13,7 @@ public class ArvoreDeDecisao <T extends No<T>>{
 	
 	public void inicio(){
 		atual = primeiro;
+		anterior = null;
 	}
 	
 	public void sim() throws Exception{
@@ -19,7 +21,8 @@ public class ArvoreDeDecisao <T extends No<T>>{
 		
 		if(no == null)
 			throw new Exception();
-
+		
+		anterior = atual;
 		atual = no;		
 	}
 	
@@ -28,7 +31,8 @@ public class ArvoreDeDecisao <T extends No<T>>{
 		
 		if(no == null)
 			throw new Exception();
-
+		
+		anterior = atual;
 		atual = no;
 	}
 	
@@ -37,7 +41,19 @@ public class ArvoreDeDecisao <T extends No<T>>{
 	}
 	
 	public void add(T no) {
+		
+		if (anterior == null) {
+			primeiro.setNao(no);
+			return;
+		}
+		
 		no.setNao(atual);
-		primeiro = no;
+		
+		if(anterior.getSim().equals(atual)) {
+			anterior.setSim(no);
+			return;
+		}
+		
+		anterior.setNao(no);
 	}
 }
